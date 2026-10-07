@@ -1,0 +1,51 @@
+{
+  "created_at": "2026-10-07T13:38:11+00:00",
+  "schema_version": "phase1-safe-schema-v0",
+  "adapter_version": "phase1-safe-v0",
+  "spec_version": "phase1-safe-spec-v0",
+  "input": {
+    "path": "data/raw/cactus.json",
+    "sha256": "be3421495f9dd76dd47d5fd4abd9fdabed9c97fcb7f7bba34ecfc78fe07d3d18",
+    "format": "cactus"
+  },
+  "bindings": null,
+  "args": {
+    "cmd": "build",
+    "input": "data/raw/cactus.json",
+    "format": "cactus",
+    "out_dir": "runs/phase1_safe/n150_seed0_adult",
+    "n": 150,
+    "seed": 0,
+    "attitudes": "negative",
+    "allow_missing_thought": false,
+    "allow_missing_patterns": false,
+    "keep_all_client_dialogues": false,
+    "min_age": 18,
+    "style_k": 3,
+    "style_min_chars": 20,
+    "style_max_chars": 400,
+    "resistance": "lexical-v1",
+    "bindings": null
+  },
+  "selection_rule": "attitude in ['negative']; thought present; patterns present; >=1 client turn; dedup by source_id and dialogue text; one dialogue per client (intake+thought), smallest source_id; numeric source age >= 18",
+  "filter_stats": {
+    "total": 31577,
+    "dropped_attitude": 22108,
+    "dropped_duplicate_client": 4685,
+    "dropped_age": 1353,
+    "kept": 3431
+  },
+  "sampled": 150,
+  "resistance_status_counts": {
+    "observed": 8,
+    "not_observed": 142,
+    "unknown": 0
+  },
+  "persona_field_coverage": {
+    "age": 150,
+    "gender": 150,
+    "occupation": 116,
+    "reason_for_seeking_help": 150
+  },
+  "status": "implementation pilot (not a Table 6 reproduction)"
+}
