@@ -1,0 +1,61 @@
+{
+  "records": 31577,
+  "parse_errors": 0,
+  "schema_invalid": 0,
+  "no_dialogue_turns": 0,
+  "attitude_counts": {
+    "negative": 9469,
+    "neutral": 10882,
+    "positive": 11226
+  },
+  "negative_records": 9469,
+  "intake_field_coverage": {
+    "name": 31577,
+    "age": 31577,
+    "gender": 31538,
+    "occupation": 24517,
+    "reason_for_seeking_help": 31577
+  },
+  "thought_coverage": 31577,
+  "pattern_coverage": 31577,
+  "pattern_label_counts": {
+    "overgeneralization": 20353,
+    "jumping to conclusions: fortune-telling": 14969,
+    "personalization": 14405,
+    "mental filtering": 13981,
+    "labeling and mislabeling": 13370,
+    "catastrophizing": 12249,
+    "discounting the positive": 11914,
+    "black-and-white or polarized thinking / all or nothing thinking": 11439,
+    "jumping to conclusions: mind reading": 8821,
+    "none": 1898,
+    "should statements": 1289
+  },
+  "turns_per_dialogue": {
+    "n": 31577,
+    "min": 21,
+    "p25": 29.0,
+    "median": 31,
+    "p75": 32.0,
+    "max": 35
+  },
+  "client_utterance_chars": {
+    "n": 472607,
+    "min": 8,
+    "p25": 99.0,
+    "median": 130,
+    "p75": 161.0,
+    "max": 455
+  },
+  "resistance_lexical_v1": {
+    "not_observed": 30513,
+    "observed": 1064
+  },
+  "unique_clients": 4057,
+  "unique_negative_clients": 4012,
+  "input": {
+    "path": "data/raw/cactus.json",
+    "sha256": "be3421495f9dd76dd47d5fd4abd9fdabed9c97fcb7f7bba34ecfc78fe07d3d18",
+    "format": "cactus"
+  }
+}

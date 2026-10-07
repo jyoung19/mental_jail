@@ -6,7 +6,7 @@ for input sha256, arguments, filter stats and coverage.
 
 | Folder | Command |
 |---|---|
-| `cactus_profile.json` | `python3 -m phase1_safe.run profile --input data/raw/cactus.json --out-dir …` |
+| `corpus_profile.json` | `python3 -m phase1_safe.run profile --input data/raw/cactus.json --out-dir …` |
 | `n150_seed0/` | `build --n 150 --seed 0 --resistance lexical-v1` (includes minors) |
 | `n150_seed0_adult/` | same + `--min-age 18` |
 
