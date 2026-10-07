@@ -89,11 +89,26 @@ class RecordsAndSelection(unittest.TestCase):
 
     def test_filter_stats(self):
         kept, stats = select_records(self.records)
-        self.assertEqual(stats, {"total": 14, "dropped_attitude": 2, "dropped_missing_thought": 1,
+        self.assertEqual(stats, {"total": 15, "dropped_attitude": 2, "dropped_missing_thought": 1,
                                  "dropped_missing_patterns": 1, "dropped_duplicate_dialogue": 1,
-                                 "dropped_no_client_turn": 1, "kept": 8})
+                                 "dropped_no_client_turn": 1, "dropped_duplicate_client": 1, "kept": 8})
         self.assertTrue(all(r["attitude"] == "negative" for r in kept))
         self.assertEqual(sum(stats[k] for k in stats if k.startswith("dropped")) + stats["kept"], stats["total"])
+
+    def test_one_dialogue_per_client_unless_disabled(self):
+        kept, _ = select_records(self.records)
+        ids = {r["source_id"] for r in kept}
+        self.assertIn("cactus-000009", ids)          # smallest source_id of that client wins
+        self.assertNotIn("cactus-000014", ids)
+        kept_all, stats = select_records(self.records, dedup_client=False)
+        self.assertEqual(len(kept_all), 9)
+        self.assertNotIn("dropped_duplicate_client", stats)
+
+    def test_min_age_filter(self):
+        kept, stats = select_records(self.records, min_age=30)
+        self.assertTrue(all(int(r["intake_form"]["age"]) >= 30 for r in kept))
+        self.assertEqual(stats["dropped_age"], 4)  # ages 29, 27, 19 + row 14 (age 27, checked before client dedup)
+        self.assertEqual(stats["kept"], 5)
 
     def test_same_seed_same_selection_regardless_of_input_order(self):
         kept, _ = select_records(self.records)
@@ -122,7 +137,7 @@ class PersonaExtraction(unittest.TestCase):
 
     def test_valid_and_traceable(self):
         for rec in self.kept:
-            p = self.build(rec, resistance_method="lexical-v0")
+            p = self.build(rec, resistance_method="lexical-v1")
             self.assertEqual(validate_persona(p), [], p["persona_id"])
             client_turns = {t["turn_id"]: t["text"] for t in rec["dialogue"] if t["speaker"] == "client"}
             for ref in p["style_references"]:
@@ -149,15 +164,26 @@ class PersonaExtraction(unittest.TestCase):
 
     def test_resistance_lexical_requires_evidence_on_client_turns(self):
         rec = self.kept[0]
-        res = extract_resistance(rec, "lexical-v0")
+        res = extract_resistance(rec, "lexical-v1")
         self.assertEqual(res["status"], "observed")
         for tid, text in zip(res["evidence_turn_ids"], res["evidence_text"]):
             self.assertEqual(rec["dialogue"][tid]["speaker"], "client")
             self.assertEqual(rec["dialogue"][tid]["text"], text)
         by_id = {r["source_id"]: r for r in self.kept}
-        self.assertEqual(extract_resistance(by_id["cactus-000001"], "lexical-v0")["status"], "not_observed")
+        self.assertEqual(extract_resistance(by_id["cactus-000001"], "lexical-v1")["status"], "not_observed")
         with self.assertRaises(ValueError):
             extract_resistance(rec, "llm")
+
+    def test_resistance_curly_apostrophe_and_hopelessness(self):
+        def rec(client_text):
+            return {"source_id": "s", "dialogue": [
+                {"turn_id": 0, "speaker": "counselor", "text": "Could you try a small step?"},
+                {"turn_id": 1, "speaker": "client", "text": client_text}]}
+        self.assertEqual(extract_resistance(rec("I don\u2019t think that would work."), "lexical-v1")["status"],
+                         "observed")
+        # Hopelessness / past attempts are not pushback on the counselor.
+        for text in ("What's the point of anything?", "I tried journaling and it didn't help."):
+            self.assertEqual(extract_resistance(rec(text), "lexical-v1")["status"], "not_observed", text)
 
     def test_validator_catches_problems(self):
         p = self.build(self.kept[0])
@@ -207,10 +233,11 @@ class BindingsAndSpecs(unittest.TestCase):
 class Profiling(unittest.TestCase):
     def test_profile_counts(self):
         rep = profile_records(load_fixture_records())
-        self.assertEqual(rep["records"], 14)
-        self.assertEqual(rep["attitude_counts"], {"negative": 12, "neutral": 1, "positive": 1})
+        self.assertEqual(rep["records"], 15)
+        self.assertEqual(rep["attitude_counts"], {"negative": 13, "neutral": 1, "positive": 1})
         self.assertEqual(rep["schema_invalid"], 0)
-        self.assertEqual(rep["intake_field_coverage"]["occupation"], 12)
+        self.assertEqual(rep["intake_field_coverage"]["occupation"], 13)
+        self.assertEqual(rep["unique_negative_clients"], 11)  # rows 0/7 and 9/14 share a client
 
 
 class EndToEndCLI(unittest.TestCase):
@@ -221,8 +248,8 @@ class EndToEndCLI(unittest.TestCase):
     def test_build_is_reproducible_and_complete(self):
         with tempfile.TemporaryDirectory() as d:
             a, b = Path(d) / "a", Path(d) / "b"
-            self.run_build(a, "--resistance", "lexical-v0")
-            self.run_build(b, "--resistance", "lexical-v0")
+            self.run_build(a, "--resistance", "lexical-v1")
+            self.run_build(b, "--resistance", "lexical-v1")
             for name in ("records.jsonl", "personas.jsonl", "specs.jsonl"):
                 self.assertEqual((a / name).read_bytes(), (b / name).read_bytes(), name)
             manifest = json.loads((a / "manifest.json").read_text())

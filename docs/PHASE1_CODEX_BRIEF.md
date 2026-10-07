@@ -38,6 +38,8 @@
 
 ## 4. Phase 1 safe module — IMPLEMENTED in `phase1_safe/` (see its README)
 
+Verified on the real Cactus corpus — see `docs/PHASE1_CACTUS_PROFILE.md`.
+
 Actual layout differs slightly from the proposal below: `select_records.py`, `bind.py`,
 `profile.py`, `run.py` (CLI), tests in `phase1_safe/tests/` (stdlib unittest, 26 tests).
 

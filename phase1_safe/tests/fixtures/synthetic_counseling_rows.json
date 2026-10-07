@@ -125,5 +125,14 @@
    "mind reading"
   ],
   "dialogue": "Counselor: What are you hoping to get from today?\nClient: I want to join the hiking club but I'm convinced nobody there will talk to me.\nCounselor: Let's explore that thought together.\nClient: I'm not sure that will change anything, honestly."
+ },
+ {
+  "intake_form": "1. Basic Information\nName:\nDana Seo\nAge:\n27\nGender:\nfemale\nOccupation: Barista\nEducation: High school\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nAnxious about a new apartment.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "Moving means everything will go wrong.",
+  "patterns": [
+   "fortune-telling"
+  ],
+  "dialogue": "Counselor: Last time we talked about the move. How is it going?\nClient: Still worried, but I unpacked two boxes and nothing bad happened yet."
  }
 ]

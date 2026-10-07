@@ -2,7 +2,7 @@
 
     python3 -m phase1_safe.run profile --input data/raw/cactus.json --out-dir runs/phase1_safe/profile
     python3 -m phase1_safe.run build   --input data/raw/cactus.json --out-dir runs/phase1_safe/build \\
-        --n 150 --seed 0 [--style-k 3] [--resistance lexical-v0] [--bindings bindings.jsonl]
+        --n 150 --seed 0 [--style-k 3] [--resistance lexical-v1] [--bindings bindings.jsonl]
 
 Outputs (build): records.jsonl (selected canonical records), personas.jsonl,
 specs.jsonl, manifest.json. Outputs are byte-identical for the same input and
@@ -55,9 +55,11 @@ def cmd_build(args):
         return 2
     attitudes = tuple(a for a in args.attitudes.split(",") if a) if args.attitudes else ()
     kept, stats = select_records(records, attitudes=attitudes, require_thought=not args.allow_missing_thought,
-                                 require_patterns=not args.allow_missing_patterns)
+                                 require_patterns=not args.allow_missing_patterns,
+                                 dedup_client=not args.keep_all_client_dialogues, min_age=args.min_age)
     picked = sample_records(kept, args.n, args.seed)
-    rule = describe_rule(attitudes, not args.allow_missing_thought, not args.allow_missing_patterns)
+    rule = describe_rule(attitudes, not args.allow_missing_thought, not args.allow_missing_patterns,
+                         not args.keep_all_client_dialogues, args.min_age)
     personas = [build_persona(r, seed=args.seed, selection_rule=rule, style_k=args.style_k,
                               style_min_chars=args.style_min_chars, style_max_chars=args.style_max_chars,
                               resistance_method=args.resistance) for r in picked]
@@ -107,6 +109,10 @@ def main(argv=None):
     b.add_argument("--attitudes", default="negative", help="comma list; empty string = any (provisional)")
     b.add_argument("--allow-missing-thought", action="store_true")
     b.add_argument("--allow-missing-patterns", action="store_true")
+    b.add_argument("--keep-all-client-dialogues", action="store_true",
+                   help="do not collapse multiple dialogues of the same client")
+    b.add_argument("--min-age", type=int, default=None,
+                   help="drop clients younger than this or without a numeric age (team decision; default off)")
     b.add_argument("--style-k", type=int, default=3, help="provisional default")
     b.add_argument("--style-min-chars", type=int, default=20)
     b.add_argument("--style-max-chars", type=int, default=400)

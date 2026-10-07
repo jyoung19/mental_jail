@@ -13,16 +13,23 @@ import re
 from .schema import (ADAPTER_VERSION, PLACEHOLDER_DISTORTION_TAG, PLACEHOLDER_TARGET_ID,
                      SCHEMA_VERSION)
 
-RESISTANCE_METHODS = ("none", "lexical-v0")
-# Client pushback on a preceding counselor turn. Provisional, English-only.
+RESISTANCE_METHODS = ("none", "lexical-v1")
+# Client pushback on the preceding counselor turn. Provisional, English-only.
+# v1 (after checking real Cactus output) drops markers that mostly expressed
+# hopelessness or past attempts rather than pushback ("what's the point",
+# "didn't help") and matches after normalizing curly apostrophes.
 _RESISTANCE_MARKERS = (
     "i don't think that", "i don't think so", "i don't think it will", "that won't work",
-    "that wouldn't work", "it won't help", "won't make a difference", "doesn't help",
-    "didn't help", "i've tried that", "i already tried", "what's the point",
-    "easier said than done", "you don't understand", "that's not true", "i doubt that",
-    "yeah, but", "yes, but", "i'm not sure that will",
+    "that wouldn't work", "it won't help", "that won't help", "won't make a difference",
+    "i've tried that", "i already tried that", "easier said than done",
+    "you don't understand", "that's not true", "i doubt that", "yeah, but", "yes, but",
+    "i'm not sure that will", "i'm not sure that would",
 )
 _MARKER_RE = re.compile("|".join(re.escape(m) for m in _RESISTANCE_MARKERS))
+
+
+def _norm(text):
+    return text.lower().replace("\u2019", "'").replace("\u2018", "'")
 
 
 def select_style_references(record, k=3, min_chars=20, max_chars=400):
@@ -39,12 +46,12 @@ def select_style_references(record, k=3, min_chars=20, max_chars=400):
 def extract_resistance(record, method="none"):
     if method == "none":
         return {"status": "unknown", "method": "none", "evidence_turn_ids": [], "evidence_text": []}
-    if method != "lexical-v0":
+    if method != "lexical-v1":
         raise ValueError(f"unknown resistance method {method!r}; choose from {RESISTANCE_METHODS}")
     ids, texts = [], []
     turns = record["dialogue"]
     for prev, t in zip(turns, turns[1:]):
-        if t["speaker"] == "client" and prev["speaker"] == "counselor" and _MARKER_RE.search(t["text"].lower()):
+        if t["speaker"] == "client" and prev["speaker"] == "counselor" and _MARKER_RE.search(_norm(t["text"])):
             ids.append(t["turn_id"])
             texts.append(t["text"])
     return {"status": "observed" if ids else "not_observed", "method": method,

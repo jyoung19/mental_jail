@@ -19,7 +19,7 @@ python3 -m phase1_safe.run profile --input data/raw/cactus.json --out-dir runs/p
 
 # 2) build personas + specs
 python3 -m phase1_safe.run build --input data/raw/cactus.json --out-dir runs/phase1_safe/build \
-    --n 150 --seed 0 [--resistance lexical-v0] [--bindings bindings.jsonl]
+    --n 150 --seed 0 [--resistance lexical-v1] [--bindings bindings.jsonl]
 
 # tests (synthetic fixture only)
 python3 -m unittest discover -s phase1_safe/tests -t .
@@ -42,13 +42,21 @@ other corpora (CBT-DP, Cheeseburger Therapy, or Jinkwon's files) after writing a
 | Affect: Cactus has no label → always `unknown` | 결정 | `extract.py` |
 | Filter = negative + thought + patterns + ≥1 client turn | **provisional** | `--attitudes`, `--allow-missing-*` |
 | Style refs = first 3 client turns, 20–400 chars | **provisional** | `--style-k`, `--style-*-chars` |
-| `lexical-v0` resistance markers (English phrase list) | **provisional, opt-in** | `extract.py::_RESISTANCE_MARKERS` |
-| Cactus raw format (`intake_form` text, `Client:` lines) | **assumed** — same as old `build_personas.py`; verify with `profile` on real data | `adapters/cactus.py` |
+| `lexical-v1` resistance markers (English phrase list) | **provisional, opt-in**; noisy on real data (see below) | `extract.py::_RESISTANCE_MARKERS` |
+| One dialogue per client (Cactus repeats each client with different CBT techniques) | **provisional default**; `--keep-all-client-dialogues` to disable | `select_records.py` |
+| Cactus raw format (`intake_form` text, `Client:` lines) | **verified** on `LangAGI-Lab/cactus` @ `237cb78` (sha256 `be342149…`) | `adapters/cactus.py` |
 | `source_id` = `cactus-<row index>` when the row has no id | 결정 (traceable via input sha256) | `to_record` |
+| Minors: Cactus negative clients include ages 10–17 (581 / 4,012) | **team decision needed**; `--min-age 18` to exclude, default keeps all | `select_records.py` |
 | Spec text template | slot template only, **not** paper `G_script` | `compile_spec.py` |
+
+## Real-corpus check (Cactus, 2026-10-07)
+
+Source: HF `LangAGI-Lab/cactus` (formerly `DLI-Lab/cactus`, GPL), revision
+`237cb781cb6cbab609bc11f02a24ea6bc408ea4b`, `cactus.json` sha256
+`be3421495f9dd76dd47d5fd4abd9fdabed9c97fcb7f7bba34ecfc78fe07d3d18`. Download into
+`data/raw/` (gitignored). Full numbers: `docs/PHASE1_CACTUS_PROFILE.md`.
 
 ## Not done here (blocked)
 
-- Real-corpus profiling: needs the raw Cactus file locally (not in repo; HF was unreachable from the build env).
 - CBT-DP / Cheeseburger adapters: data and field mapping unknown.
 - Goal binding / matching rule and fixed-sequence `w/o Phase II` executor: wait for Jinkwon's data and Phase II interface.

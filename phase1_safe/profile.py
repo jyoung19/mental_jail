@@ -6,6 +6,7 @@ from statistics import median, quantiles
 
 from .extract import extract_resistance
 from .schema import INTAKE_FIELDS, validate_record
+from .select_records import client_key
 
 
 def _dist(values):
@@ -22,7 +23,7 @@ def profile_records(records: list[dict], parse_errors: int = 0) -> dict:
     pattern_counts = Counter(p for r in records for p in r.get("patterns", []))
     client_lens = [len(t["text"]) for r in records for t in r["dialogue"] if t["speaker"] == "client"]
     turn_counts = [len(r["dialogue"]) for r in records]
-    lexical = Counter(extract_resistance(r, "lexical-v0")["status"] for r in records)
+    lexical = Counter(extract_resistance(r, "lexical-v1")["status"] for r in records)
     return {
         "records": len(records),
         "parse_errors": parse_errors,
@@ -36,5 +37,7 @@ def profile_records(records: list[dict], parse_errors: int = 0) -> dict:
         "pattern_label_counts": dict(pattern_counts.most_common()),
         "turns_per_dialogue": _dist(turn_counts),
         "client_utterance_chars": _dist(client_lens),
-        "resistance_lexical_v0": dict(lexical),
+        "resistance_lexical_v1": dict(lexical),
+        "unique_clients": len({client_key(r) for r in records}),
+        "unique_negative_clients": len({client_key(r) for r in records if r.get("attitude") == "negative"}),
     }
