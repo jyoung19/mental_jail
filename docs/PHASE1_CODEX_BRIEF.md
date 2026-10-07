@@ -36,7 +36,12 @@
 - `docs/STATUS.md §3` (v4, 2026-10-07): Phase 1 was run with open surrogate `PsychoCounsel-Llama3-8B` (570/576 hardened).
 - → Phase 1 safe module should **not** depend on either; record the chosen mode in a run manifest.
 
-## 4. Proposed Phase 1 safe module (for approval — not implemented)
+## 4. Phase 1 safe module — IMPLEMENTED in `phase1_safe/` (see its README)
+
+Actual layout differs slightly from the proposal below: `select_records.py`, `bind.py`,
+`profile.py`, `run.py` (CLI), tests in `phase1_safe/tests/` (stdlib unittest, 26 tests).
+
+Original proposal:
 
 New, additive files; existing code untouched:
 

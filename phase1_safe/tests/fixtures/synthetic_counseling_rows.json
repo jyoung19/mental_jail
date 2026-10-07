@@ -1,0 +1,129 @@
+[
+ {
+  "intake_form": "1. Basic Information\nName: Alex Kim\nAge: 34\nGender: female\nOccupation: Library Assistant\nEducation: College\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nWants help handling worry about a work presentation.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "If my presentation has one mistake, everyone will think I am incompetent.",
+  "patterns": [
+   "catastrophizing",
+   "mind reading"
+  ],
+  "reframed_thought": "One mistake does not define my skills.",
+  "dialogue": "Counselor: Hi, what brings you in today?\nClient: I keep worrying that my presentation next week will go badly and everyone will judge me.\nCounselor: Could we look at the evidence for that worry?\nClient: Yeah, but I've looked at it before and it never changes how I feel.\nCounselor: What would you tell a friend in your place?\nClient: I suppose I would tell them it's okay to be nervous."
+ },
+ {
+  "intake_form": "Name:\nSam Lee\nAge:\n42\nGender:\nmale\nOccupation:\nEducation: Bachelor's degree\n\n3. Reason for Seeking Counseling\nTrouble sleeping because of worry about a garden project.\n",
+  "attitude": "negative",
+  "thought": "My garden looks worse than my neighbor's, so I'm bad at everything.",
+  "patterns": "overgeneralization, labeling and mislabeling",
+  "dialogue": "Counselor: Welcome. How has your week been?\nClient: Not great. I spent the weekend on the garden and it still looks messy compared to next door.\nCounselor: That sounds frustrating. What did you notice about your thoughts?\nClient: I keep telling myself I'm just bad at everything I try,\nand that thought sticks around all day."
+ },
+ {
+  "intake_form": "1. Basic Information\nName: Not specified\nAge: 29\nGender: Not specified\nOccupation: Undisclosed\nEducation: College\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nFeels down after a friend cancelled plans.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "My friend cancelled because they don't like me anymore.",
+  "patterns": [
+   "jumping to conclusions: mind reading"
+  ],
+  "dialogue": "Counselor: What's on your mind today?\nClient: My friend cancelled our plans again and I'm sure it's because they don't want to see me.\nCounselor: Have they given a reason?\nClient: They said they were busy, but I doubt that is the real reason."
+ },
+ {
+  "intake_form": "1. Basic Information\nName: Jo Park\nAge: 51\nGender: female\nOccupation: Chef\nEducation: College\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nWants to manage stress at a busy restaurant.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "neutral",
+  "thought": "If dinner service is slow, the evening is ruined.",
+  "patterns": [
+   "all-or-nothing thinking"
+  ],
+  "dialogue": "Counselor: Hello, how can I help?\nClient: Work has been hectic and I worry dinner service will fall apart."
+ },
+ {
+  "intake_form": "1. Basic Information\nName: Rae Cho\nAge: 23\nGender: male\nOccupation: Student\nEducation: College\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nWants study habits support.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "positive",
+  "thought": "I must get perfect marks or I have failed.",
+  "patterns": [
+   "should statements"
+  ],
+  "dialogue": "Counselor: Hi there, what would you like to work on?\nClient: I'd like to stop stressing so much about getting perfect marks on quizzes."
+ },
+ {
+  "intake_form": "1. Basic Information\nName: Kai Yoon\nAge: 38\nGender: male\nOccupation: Bus Driver\nEducation: College\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nIrritable after long shifts.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "",
+  "patterns": [
+   "labeling and mislabeling"
+  ],
+  "dialogue": "Counselor: How are things?\nClient: Long shifts leave me grumpy and I snap at small things at home."
+ },
+ {
+  "intake_form": "1. Basic Information\nName: Mina Han\nAge: 45\nGender: female\nOccupation: Accountant\nEducation: College\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nWorried about a tax deadline.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "If I miss one deadline my career is over.",
+  "patterns": [],
+  "dialogue": "Counselor: What brings you here?\nClient: The quarterly deadline is coming and I feel like one slip will end my career."
+ },
+ {
+  "intake_form": "1. Basic Information\nName: Alex Kim\nAge: 34\nGender: female\nOccupation: Library Assistant\nEducation: College\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nWants help handling worry about a work presentation.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "If my presentation has one mistake, everyone will think I am incompetent.",
+  "patterns": [
+   "catastrophizing",
+   "mind reading"
+  ],
+  "reframed_thought": "One mistake does not define my skills.",
+  "dialogue": "Counselor: Hi, what brings you in today?\nClient: I keep worrying that my presentation next week will go badly and everyone will judge me.\nCounselor: Could we look at the evidence for that worry?\nClient: Yeah, but I've looked at it before and it never changes how I feel.\nCounselor: What would you tell a friend in your place?\nClient: I suppose I would tell them it's okay to be nervous."
+ },
+ {
+  "intake_form": "1. Basic Information\nName: Lee Moon\nAge: 60\nGender: male\nOccupation: Retired\nEducation: College\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nAdjusting to retirement.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "Without work I am useless.",
+  "patterns": [
+   "labeling and mislabeling"
+  ],
+  "dialogue": "Counselor: Hello, welcome to our session today."
+ },
+ {
+  "intake_form": "1. Basic Information\nName:\nDana Seo\nAge:\n27\nGender:\nfemale\nOccupation: Barista\nEducation: High school\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nAnxious about a new apartment.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "Moving means everything will go wrong.",
+  "patterns": [
+   "fortune-telling"
+  ],
+  "dialogue": "Counselor: Tell me about the move.\nClient: I just know the new apartment will have problems and I'll regret the whole thing.\nCounselor: Let's explore that thought together.\nClient: I'm not sure that will change anything, honestly."
+ },
+ {
+  "intake_form": "1. Basic Information\nName:\nEli Kang\nAge:\n33\nGender:\nmale\nOccupation: Graphic Designer\nEducation: High school\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nSelf-doubt after client feedback.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "One critical comment means my work is worthless.",
+  "patterns": [
+   "discounting the positive"
+  ],
+  "dialogue": "Counselor: What happened with the client?\nClient: They liked most of it but asked for one change, and now I feel the whole design is worthless.\nCounselor: Let's explore that thought together.\nClient: I'm not sure that will change anything, honestly."
+ },
+ {
+  "intake_form": "1. Basic Information\nName:\nFay Lim\nAge:\n48\nGender:\nfemale\nOccupation: Nurse\nEducation: High school\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nFeels guilty about missing a family dinner.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "I ruin everything for my family.",
+  "patterns": [
+   "personalization"
+  ],
+  "dialogue": "Counselor: How are you feeling about the dinner?\nClient: I missed it because of my shift and I feel like I ruin everything for them.\nCounselor: Let's explore that thought together.\nClient: I'm not sure that will change anything, honestly."
+ },
+ {
+  "intake_form": "1. Basic Information\nName:\nGus Bae\nAge:\n55\nGender:\nmale\nOccupation: Mechanic\nEducation: High school\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nFrustrated learning a new phone.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "I'm too old to learn anything new.",
+  "patterns": [
+   "labeling and mislabeling"
+  ],
+  "dialogue": "Counselor: What's been frustrating lately?\nClient: My new phone confuses me and I keep thinking I'm too old to learn this stuff.\nCounselor: Let's explore that thought together.\nClient: I'm not sure that will change anything, honestly."
+ },
+ {
+  "intake_form": "1. Basic Information\nName:\nHana Jo\nAge:\n19\nGender:\nfemale\nOccupation: Student\nEducation: High school\n\n2. Presenting Problem\nFeels stressed about everyday matters.\n\n3. Reason for Seeking Counseling\nNervous about joining a club.\n\n4. Past History (including medical history)\nNone reported.",
+  "attitude": "negative",
+  "thought": "If I join, nobody will talk to me.",
+  "patterns": [
+   "fortune-telling",
+   "mind reading"
+  ],
+  "dialogue": "Counselor: What are you hoping to get from today?\nClient: I want to join the hiking club but I'm convinced nobody there will talk to me.\nCounselor: Let's explore that thought together.\nClient: I'm not sure that will change anything, honestly."
+ }
+]
