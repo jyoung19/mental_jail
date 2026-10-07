@@ -100,7 +100,7 @@ class RecordsAndSelection(unittest.TestCase):
         ids = {r["source_id"] for r in kept}
         self.assertIn("cactus-000009", ids)          # smallest source_id of that client wins
         self.assertNotIn("cactus-000014", ids)
-        kept_all, stats = select_records(self.records, dedup_client=False)
+        kept_all, stats = select_records(self.records, dedup="none")
         self.assertEqual(len(kept_all), 9)
         self.assertNotIn("dropped_duplicate_client", stats)
 

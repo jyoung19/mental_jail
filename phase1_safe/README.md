@@ -38,16 +38,29 @@ other corpora (CBT-DP, Cheeseburger Therapy, or Jinkwon's files) after writing a
 |---|---|---|
 | Persona and goal are separate; link only via abstract `target_id` | 결정 | `bind.py` rejects non-id text and query fields |
 | Missing/placeholder source values → `null`, never a default | 결정 | `adapters/cactus.py::clean_value` |
-| `attitude=negative` is **not** resistance | 결정 | resistance default `unknown` |
+| `attitude=negative` is a generation condition that *includes* resistance instructions (Cactus Table 8), not per-dialogue evidence | 결정 | resistance default `unknown`; observed only from turns |
 | Affect: Cactus has no label → always `unknown` | 결정 | `extract.py` |
 | Filter = negative + thought + patterns + ≥1 client turn | **provisional** | `--attitudes`, `--allow-missing-*` |
 | Style refs = first 3 client turns, 20–400 chars | **provisional** | `--style-k`, `--style-*-chars` |
 | `lexical-v1` resistance markers (English phrase list) | **provisional, opt-in**; noisy on real data (see below) | `extract.py::_RESISTANCE_MARKERS` |
-| One dialogue per client (Cactus repeats each client with different CBT techniques) | **provisional default**; `--keep-all-client-dialogues` to disable | `select_records.py` |
+| One dialogue per client (Cactus repeats each client with different CBT techniques) | **provisional default**; `--dedup thought` (persona_redteam README) or `--dedup none` | `select_records.py` |
 | Cactus raw format (`intake_form` text, `Client:` lines) | **verified** on `LangAGI-Lab/cactus` @ `237cb78` (sha256 `be342149…`) | `adapters/cactus.py` |
 | `source_id` = `cactus-<row index>` when the row has no id | 결정 (traceable via input sha256) | `to_record` |
 | Minors: Cactus negative clients include ages 10–17 (581 / 4,012) | **team decision needed**; `--min-age 18` to exclude, default keeps all | `select_records.py` |
 | Spec text template | slot template only, **not** paper `G_script` | `compile_spec.py` |
+
+## Export to persona_redteam pool format (draft)
+
+`python3 -m phase1_safe.export_pool` converts `records.jsonl` + `personas.jsonl` into
+the row format of `persona_redteam/personas/cactus_distress_n2000.jsonl` on the fork's
+`main`, driven by a mapping spec (`mappings/redteam_pool_draft.json`). Unconfirmed
+fields stay `unresolved` and export fails unless `--on-unresolved omit`. Use
+`build --dedup thought` to follow that README's dedup step (reproduces 9,469 → 4,011).
+Evidence, status and open questions: `docs/PHASE1_POOL_EXPORT.md`.
+
+Adapter `phase1-safe-v1` also keeps extra intake sections verbatim in
+`intake_form` (education, marital_status, family_details, presenting_problem,
+past_history, functioning, social_support).
 
 ## Real-corpus check (Cactus, 2026-10-07)
 

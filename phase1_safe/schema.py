@@ -13,7 +13,7 @@ from __future__ import annotations
 import re
 
 SCHEMA_VERSION = "phase1-safe-schema-v0"
-ADAPTER_VERSION = "phase1-safe-v0"
+ADAPTER_VERSION = "phase1-safe-v1"  # v1: extra intake sections kept verbatim
 
 SPEAKERS = ("client", "counselor")
 RESISTANCE_STATUS = ("observed", "not_observed", "unknown")

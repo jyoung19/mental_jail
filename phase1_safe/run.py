@@ -22,7 +22,7 @@ from .compile_spec import SPEC_VERSION, compile_spec
 from .extract import RESISTANCE_METHODS, build_persona
 from .profile import profile_records
 from .schema import ADAPTER_VERSION, SCHEMA_VERSION, validate_persona, validate_record
-from .select_records import describe_rule, sample_records, select_records
+from .select_records import DEDUP_MODES, describe_rule, sample_records, select_records
 
 FORMATS = ("cactus", "canonical")
 
@@ -56,10 +56,10 @@ def cmd_build(args):
     attitudes = tuple(a for a in args.attitudes.split(",") if a) if args.attitudes else ()
     kept, stats = select_records(records, attitudes=attitudes, require_thought=not args.allow_missing_thought,
                                  require_patterns=not args.allow_missing_patterns,
-                                 dedup_client=not args.keep_all_client_dialogues, min_age=args.min_age)
+                                 dedup=args.dedup, min_age=args.min_age)
     picked = sample_records(kept, args.n, args.seed)
     rule = describe_rule(attitudes, not args.allow_missing_thought, not args.allow_missing_patterns,
-                         not args.keep_all_client_dialogues, args.min_age)
+                         args.dedup, args.min_age)
     personas = [build_persona(r, seed=args.seed, selection_rule=rule, style_k=args.style_k,
                               style_min_chars=args.style_min_chars, style_max_chars=args.style_max_chars,
                               resistance_method=args.resistance) for r in picked]
@@ -109,8 +109,8 @@ def main(argv=None):
     b.add_argument("--attitudes", default="negative", help="comma list; empty string = any (provisional)")
     b.add_argument("--allow-missing-thought", action="store_true")
     b.add_argument("--allow-missing-patterns", action="store_true")
-    b.add_argument("--keep-all-client-dialogues", action="store_true",
-                   help="do not collapse multiple dialogues of the same client")
+    b.add_argument("--dedup", choices=DEDUP_MODES, default="client",
+                   help="client (default) | thought (persona_redteam README step 2) | none")
     b.add_argument("--min-age", type=int, default=None,
                    help="drop clients younger than this or without a numeric age (team decision; default off)")
     b.add_argument("--style-k", type=int, default=3, help="provisional default")

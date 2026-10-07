@@ -26,6 +26,16 @@ _KEY_RE = re.compile(r"^\s*([A-Za-z][A-Za-z /()-]{0,40}?)\s*:\s*(.*)$")
 _SECTION_RE = re.compile(r"^\s*\d+\s*[.)]\s*(.+?)\s*:?\s*$")
 _BASIC_KEYS = {"name": "name", "age": "age", "gender": "gender", "sex": "gender",
                "occupation": "occupation", "job": "occupation"}
+# Intake fields beyond the basic persona fields, kept verbatim so downstream
+# exporters can choose a mapping (Cactus App. E.1 / Fig. 16 intake layout).
+INTAKE_EXTRA_FIELDS = ("education", "marital_status", "family_details", "presenting_problem",
+                       "past_history", "functioning", "social_support")
+_EXTRA_BASIC_KEYS = {"education": "education", "marital status": "marital_status",
+                     "family details": "family_details"}
+_SECTION_HEAD_RE = re.compile(r"^\s*\d+\s*[.)]\s*([^:\n]*?)\s*(?::\s*(.*))?$")
+_SECTION_TITLES = (("presenting problem", "presenting_problem"), ("past history", "past_history"),
+                   ("functioning", "functioning"), ("social support", "social_support"),
+                   ("anyone you can talk to", "social_support"))
 _PLACEHOLDERS = {"", "-", "n/a", "na", "none specified", "not specified", "unspecified",
                  "undisclosed", "unknown", "not provided", "not mentioned", "not applicable"}
 
@@ -85,6 +95,40 @@ def parse_intake_form(text) -> dict:
     return out
 
 
+def parse_intake_sections(text) -> dict:
+    """Extra intake fields: basic-block keys (education, marital status, family
+    details) and numbered section bodies (presenting problem, past history,
+    functioning, social support). Text is kept verbatim (whitespace-normalized);
+    absent or placeholder sections are None."""
+    out = {f: None for f in INTAKE_EXTRA_FIELDS}
+    if not isinstance(text, str):
+        return out
+    current, body = None, []
+
+    def flush():
+        if current and out[current] is None:
+            out[current] = clean_value(" ".join(body))
+
+    for line in text.splitlines():
+        head = _SECTION_HEAD_RE.match(line)
+        if head:
+            flush()
+            title = head.group(1).lower()
+            current = next((field for key, field in _SECTION_TITLES if key in title), None)
+            body = [head.group(2)] if head.group(2) else []
+            continue
+        if current:
+            body.append(line.strip())
+            continue
+        m = _KEY_RE.match(line)
+        if m and m.group(1).strip().lower() in _EXTRA_BASIC_KEYS:
+            field = _EXTRA_BASIC_KEYS[m.group(1).strip().lower()]
+            if out[field] is None:
+                out[field] = clean_value(m.group(2))
+    flush()
+    return out
+
+
 def parse_dialogue(dialogue) -> list[dict]:
     """String ("Speaker: text" lines) or list of {speaker|role, text|content} -> turns."""
     turns = []
@@ -140,7 +184,8 @@ def to_record(row: dict, index: int) -> dict:
         "source_id": source_id,
         "dataset": DATASET,
         "dialogue": parse_dialogue(row.get("dialogue")),
-        "intake_form": parse_intake_form(row.get("intake_form")),
+        "intake_form": {**parse_intake_form(row.get("intake_form")),
+                        **parse_intake_sections(row.get("intake_form"))},
         "attitude": attitude.lower() if attitude else None,
         "thought": clean_value(row.get("thought")),
         "patterns": parse_patterns(row.get("patterns")),

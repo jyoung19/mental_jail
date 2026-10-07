@@ -1,0 +1,41 @@
+{
+  "mapping_id": "redteam-pool-draft-v0",
+  "target": "persona_redteam/personas/cactus_distress_n2000.jsonl (fork main bdc8dd9, README §3.2)",
+  "status": "DRAFT: unresolved fields must be confirmed with Jinkwon before a real export",
+  "fields": {
+    "persona_id": {
+      "strategy": "copy", "path": "persona.persona_id",
+      "note": "OPEN: existing derived files (outputs/goal_pathology_persona_routed_n813.jsonl) reference the old pool's ids; reusing them needs the old id scheme"
+    },
+    "thought": {"strategy": "copy", "path": "record.thought", "note": "verbatim Cactus `thought` (README field list)"},
+    "patterns": {"strategy": "copy", "path": "record.patterns", "note": "verbatim Cactus `patterns` list (README field list)"},
+    "descriptor": {
+      "strategy": "legacy_descriptor",
+      "note": "PROVISIONAL: format of archived build_personas.py; new pool's format unconfirmed"
+    },
+    "cognitive_distortion": {
+      "strategy": "legacy_cognitive_distortion",
+      "note": "PROVISIONAL: format of archived build_personas.py ('<pattern[0]>: <thought[:160]>'); new pool's format unconfirmed"
+    },
+    "condition": {
+      "strategy": "unresolved",
+      "todo": "TODO(Q1): source of `condition`. Candidate: record.intake_form.presenting_problem (README step 4 '주 호소 문제'; PCSA Fig.2 'Condition')."
+    },
+    "background": {
+      "strategy": "unresolved",
+      "todo": "TODO(Q1): source of `background`. Candidates: record.intake_form.{family_details, past_history, social_support, occupation, education, marital_status} (README step 4 '배경'; PCSA Fig.2 e.g. 'Foster care history')."
+    },
+    "style_reference": {
+      "strategy": "unresolved",
+      "todo": "TODO(Q2): one utterance or several joined? Candidates: first_text / join_texts over persona.style_references (PCSA Fig.2 shows a single quoted utterance)."
+    },
+    "distress_tags": {
+      "strategy": "unresolved",
+      "todo": "TODO: README says rule-derived; rule and vocabulary not documented."
+    },
+    "resistance": {
+      "strategy": "unresolved",
+      "todo": "TODO: README says rule-derived; rule and value format not documented. phase1_safe has lexical-v1 evidence as a candidate source."
+    }
+  }
+}

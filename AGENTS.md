@@ -1,7 +1,9 @@
 # Working Rules (for Codex / Claude / any coding agent)
 
 ## Git
-- Never modify, commit to, or push to `main`.
+- Never modify, commit to, or push to `main`. (`main` was fast-forwarded to
+  upstream `bdc8dd9` at the user's explicit request; the pre-rewrite state is
+  preserved on `archive/285dd23-before-rewrite`.)
 - Do Phase 1 work on a topic branch (planned name: `repro/phase1-safe`; the
   current prep branch is `claude/intelligent-johnson-uqo9eq`). Ask the user if unsure.
 - `origin` = `jyoung19/mental_jail` (working fork).
@@ -12,6 +14,7 @@
 ## Read first (before any Phase 1 change)
 1. `docs/PHASE1_HANDOFF.md` — research context and decisions (source of truth).
 2. `docs/PHASE1_CODEX_BRIEF.md` — repo analysis already done: gaps, files, plan.
+   `docs/PHASE1_POOL_EXPORT.md` — current task: Cactus pool producer for the new `main`.
 3. `docs/STATUS.md`, `METHOD.md` — existing method/worklog (note: they disagree
    on surrogate usage; see the brief).
 
