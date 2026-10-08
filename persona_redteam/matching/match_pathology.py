@@ -25,7 +25,10 @@ Usage:
 from __future__ import annotations
 import argparse, csv, json, math
 from pathlib import Path
-import embeddings
+try:
+    from . import embeddings
+except ImportError:  # Direct script invocation.
+    import embeddings
 
 ROOT = Path(__file__).resolve().parents[1]
 cos = lambda a, b: sum(x*y for x, y in zip(a, b)) / (math.sqrt(sum(x*x for x in a))*math.sqrt(sum(x*x for x in b))+1e-9)
@@ -34,19 +37,60 @@ route = lambda lab: "VERA-SI" if lab in ("suicidal_ideation", "self-harm") else 
 
 
 def load_pools():
-    vera = list(csv.DictReader(open(ROOT / "personas/veramh_si_n100.tsv"), delimiter="\t"))
+    with (ROOT / "personas/veramh_si_n100.tsv").open(encoding="utf-8", newline="") as stream:
+        vera = list(csv.DictReader(stream, delimiter="\t"))
+    with (ROOT / "personas/cactus_distress_n2000.jsonl").open(encoding="utf-8") as stream:
+        cactus = [json.loads(line) for line in stream]
+    vtexts, ctexts = pool_texts(vera, cactus)
+    return vera, vtexts, cactus, ctexts
+
+
+def pool_texts(vera, cactus):
+    """Original descriptor rendering, also usable with explicitly named pools."""
     vtext = lambda p: (f"{p['Age']} {p['Gender']}. {p['Diagnoses and Symptoms']}. "
                        f"{p['Current Suicidal Thoughts and Behaviors']}. triggers:{p['Recent Triggers and Stressors']}. "
                        f"comm:{p['Primary Communication Style']}")[:600]
-    cactus = [json.loads(l) for l in open(ROOT / "personas/cactus_distress_n2000.jsonl")]
     ctext = lambda p: f"{p.get('descriptor','')}. {p.get('condition','')} {p.get('cognitive_distortion','')} {p.get('style_reference','')}"[:600]
-    return vera, [vtext(p) for p in vera], cactus, [ctext(p) for p in cactus]
+    return [vtext(p) for p in vera], [ctext(p) for p in cactus]
 
 
 def pathtext(d):
     dl = d.get("distortions") if isinstance(d.get("distortions"), list) else []
     kw = d.get("keywords") if isinstance(d.get("keywords"), list) else []
     return f"{d.get('core_condition','')}. {' '.join(dl)}. {' '.join(kw)}. {d.get('compliance_lever','')}"
+
+
+def rank_candidates(goals, vera, cactus, vera_vec, cactus_vec, gv, topk=3):
+    """Original routing/cosine algorithm, separated from embedding API calls."""
+    if topk < 1 or len(goals) != len(gv) or len(vera) != len(vera_vec) or len(cactus) != len(cactus_vec):
+        raise ValueError("invalid topk or vector/row alignment")
+    vectors = [*vera_vec, *cactus_vec, *gv]
+    dimensions = {len(v) for v in vectors}
+    if not vectors or len(dimensions) != 1 or 0 in dimensions or any(
+        any(isinstance(x, bool) or not isinstance(x, (int, float)) or not math.isfinite(x) for x in v)
+        or not any(x != 0 for x in v) for v in vectors
+    ):
+        raise ValueError("embeddings must have consistent dimensions and finite nonzero vectors")
+    out = []
+    for g, v in zip(goals, gv):
+        lab = g["crisis_label"]; pool = route(lab)
+        if pool == "VERA-SI":
+            elig = ELIG.get(lab)
+            idx = [i for i in range(len(vera)) if (elig is None or vera[i]["Short Current Suicide Risk Level"] in elig)]
+            sims = sorted(idx, key=lambda i: -cos(v, vera_vec[i]))[:topk]
+            cands = [{"source": "VERA-SI", "id": vera[i]["Name"], "risk": vera[i]["Short Current Suicide Risk Level"],
+                      "cos": round(cos(v, vera_vec[i]), 3)} for i in sims]
+            rf = sorted(elig) if elig else "none"
+        else:
+            sims = sorted(range(len(cactus)), key=lambda i: -cos(v, cactus_vec[i]))[:topk]
+            cands = [{"source": "Cactus", "id": cactus[i]["persona_id"], "risk": None,
+                      "cos": round(cos(v, cactus_vec[i]), 3)} for i in sims]
+            rf = "none"
+        if len(cands) != topk:
+            raise ValueError("not enough eligible personas for requested topk")
+        out.append({**{k: g[k] for k in ("goal_id", "crisis_label", "goal", "pathology")},
+                    "routed_pool": pool, "risk_filter": rf, "persona_candidates": cands})
+    return out
 
 
 def main():
@@ -60,23 +104,7 @@ def main():
     vera_vec = embeddings.embed_texts(vtexts)
     cactus_vec = embeddings.embed_texts(ctexts)
     gv = embeddings.embed_texts([pathtext(g.get("pathology", {})) for g in goals])
-    out = []
-    for g, v in zip(goals, gv):
-        lab = g["crisis_label"]; pool = route(lab)
-        if pool == "VERA-SI":
-            elig = ELIG.get(lab)
-            idx = [i for i in range(len(vera)) if (elig is None or vera[i]["Short Current Suicide Risk Level"] in elig)]
-            sims = sorted(idx, key=lambda i: -cos(v, vera_vec[i]))[:a.topk]
-            cands = [{"source": "VERA-SI", "id": vera[i]["Name"], "risk": vera[i]["Short Current Suicide Risk Level"],
-                      "cos": round(cos(v, vera_vec[i]), 3)} for i in sims]
-            rf = sorted(elig) if elig else "none"
-        else:
-            sims = sorted(range(len(cactus)), key=lambda i: -cos(v, cactus_vec[i]))[:a.topk]
-            cands = [{"source": "Cactus", "id": cactus[i]["persona_id"], "risk": None,
-                      "cos": round(cos(v, cactus_vec[i]), 3)} for i in sims]
-            rf = "none"
-        out.append({**{k: g[k] for k in ("goal_id", "crisis_label", "goal", "pathology")},
-                    "routed_pool": pool, "risk_filter": rf, "persona_candidates": cands})
+    out = rank_candidates(goals, vera, cactus, vera_vec, cactus_vec, gv, a.topk)
     Path(a.out).write_text("\n".join(json.dumps(o, ensure_ascii=False) for o in out) + "\n", encoding="utf-8")
     print("SAVED ->", a.out, f"({len(out)})", flush=True)
 
